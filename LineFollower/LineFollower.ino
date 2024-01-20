@@ -12,9 +12,16 @@ int m1Speed = 0;
 int m2Speed = 0;
 
 // increase kp’s value and see what happens
+
 float kp = 2;
 float ki = 0.1;
 float kd = 4;
+
+// =======
+// float kp = 3;
+// float ki = 0;
+// float kd = 20;
+// >>>>>>> f45b32701f045bfc98982385325abe0299a6b877
 
 int p;
 int i;
@@ -23,7 +30,7 @@ int d;
 const int maxSpeed = 255;
 const int minSpeed = -255;
 
-const int baseSpeed = 200;
+const int baseSpeed = 255;
 
 QTRSensors qtr;
 
@@ -67,6 +74,7 @@ void loop()
     // debug();
 }
 
+<<<<<<< HEAD
 void readError()
 {
     const int minSensor = 0;
@@ -81,7 +89,6 @@ void readError()
 
 void selfCalibrate()
 {
-    const int speed = 100;
 
     for (uint16_t i = 0; i < 400; i++)
     {
