@@ -14,7 +14,7 @@ int m2Speed = 0;
 // increase kp’s value and see what happens
 float kp = 3;
 float ki = 0;
-float kd = 10;
+float kd = 20;
 
 int p = 1;
 int i = 0;
@@ -26,7 +26,7 @@ int lastError = 0;
 const int maxSpeed = 255;
 const int minSpeed = -255;
 
-const int baseSpeed = 200;
+const int baseSpeed = 255;
 
 QTRSensors qtr;
 
@@ -87,19 +87,19 @@ void loop()
 
 void selfCalibrate() {
     int sign = 1;
-    int speed = 100;
+    int speed = 200;
 
     unsigned long lastMovement = 0;
-    const unsigned long delay = 200;
+    const unsigned long delay = 800;
 
     for (uint16_t i = 0; i < 400; i++)
     {
         qtr.calibrate();
-        if (millis() - lastMovement > delay) {
-            setMotorSpeed(sign * speed, -sign * speed);
-            sign = -1;
-            lastMovement = millis();
-        }
+        // if (millis() - lastMovement > delay) {
+        //     setMotorSpeed(sign * speed, -sign * speed);
+        //     sign *= -1;
+        //     lastMovement = millis();
+        // }
     }
 }
 
