@@ -1,8 +1,8 @@
 #include <QTRSensors.h>
-const int m11Pin = 7;
-const int m12Pin = 6;
-const int m21Pin = 5;
-const int m22Pin = 4;
+const int m11Pin   = 7;
+const int m12Pin   = 6;
+const int m21Pin   = 5;
+const int m22Pin   = 4;
 const int m1Enable = 11;
 const int m2Enable = 10;
 
@@ -12,16 +12,13 @@ int m1Speed = 0;
 int m2Speed = 0;
 
 // increase kp’s value and see what happens
-float kp = 3;
-float ki = 0;
-float kd = 10;
+float kp = 2;
+float ki = 0.1;
+float kd = 4;
 
-int p = 1;
-int i = 0;
-int d = 0;
-
-int error     = 0;
-int lastError = 0;
+int p;
+int i;
+int d;
 
 const int maxSpeed = 255;
 const int minSpeed = -255;
@@ -33,7 +30,7 @@ QTRSensors qtr;
 const int sensorCount = 6;
 
 uint16_t sensorValues[sensorCount];
-int sensors[sensorCount] = {0, 0, 0, 0, 0, 0};
+int      sensors[sensorCount] = {0, 0, 0, 0, 0, 0};
 
 void setup()
 {
@@ -63,82 +60,82 @@ void setup()
 
 void loop()
 {
-    pidControl(kp, ki, kd);
+    int error = readError();
+    pidControl(error);
     setMotorSpeed(m1Speed, m2Speed);
 
-    //  DEBUGGING
-     Serial.print("Error: ");
-     Serial.println(error);
-     Serial.print("M1 speed: ");
-     Serial.println(m1Speed);
-    
-     Serial.print("M2 speed: ");
-     Serial.println(m2Speed);
-
-     for (int i = 0; i < 6; i ++) {
-        Serial.print(sensorValues[i]);
-        Serial.print(" ");
-     }
-
-     Serial.println();
-
-    lastError = error;
+    // debug();
 }
 
-void selfCalibrate() {
-    int sign = 1;
-    int speed = 100;
+void readError()
+{
+    const int minSensor = 0;
+    const int maxSensor = 5000;
 
-    unsigned long lastMovement = 0;
-    const unsigned long delay = 200;
+    const int minError = -30;
+    const int maxError = 30;
+
+    uint16_t linePosition = qtr.readLineBlack(sensorValues);
+    return map(linePosition, minSensor, maxSensor, minError, maxError);
+}
+
+void selfCalibrate()
+{
+    const int speed = 100;
 
     for (uint16_t i = 0; i < 400; i++)
     {
         qtr.calibrate();
-        if (millis() - lastMovement > delay) {
-            setMotorSpeed(sign * speed, -sign * speed);
-            sign = -1;
-            lastMovement = millis();
-        }
     }
 }
 
 // calculate PID value based on error, kp, kd, ki, p, i and d.
-void pidControl(float kp, float ki, float kd)
+void pidControl(int error)
 {
-    // inefficient code, written in loop. You must create separate functions
-    int error = map(qtr.readLineBlack(sensorValues), 0, 5000, -50, 50);
+    static int lastError;
 
-    p = error; 
+    p = error;
     i = i + error;
-    d = error - lastError;
+    d = error - lastError; //  TO MODIFY
 
     int motorSpeed = kp * p + ki * i + kd * d; // = error in this case
 
     m1Speed = baseSpeed;
     m2Speed = baseSpeed;
 
-    // a bit counter intuitive because of the signs
-    // basically in the first if, you substract the error from m1Speed (you add the negative)
-    // in the 2nd if you add the error to m2Speed (you substract the negative)
-    // it's just the way the values of the sensors and/or motors lined up
-    if (error < 0)
-    {
-        m1Speed += motorSpeed;
-    }
-    else if (error > 0)
-    {
-        m2Speed -= motorSpeed;
+    if (abs(error) <= 5) {
+        m1Speed = maxSpeed;
+        m2Speed = maxSpeed;
     }
 
-    // make sure it doesn't go past limits. You can use -255 instead of 0 if calibrated programmed
-    // properly. making sure we don't go out of bounds maybe the lower bound should be negative,
-    // instead of 0? This of what happens when making a steep turn
+    //  asa se trateaza curbele extreme (90º)
+    if (error >= 20)
+    {
+        m1Speed = minSpeed;
+        m2Speed = maxSpeed;
+    }
+    else if (error <= -20)
+    {
+        m1Speed = maxSpeed;
+        m2Speed = minSpeed;
+    }
+    else
+    {
 
+        if (error < 0)
+        {
+            m1Speed += motorSpeed;
+        }
+        else if (error > 0)
+        {
+            m2Speed -= motorSpeed;
+        }
+    }
 
-    m1Speed = constrain(m1Speed, -100, maxSpeed);
-    m2Speed = constrain(m2Speed, -100, maxSpeed);
+    m1Speed = constrain(m1Speed, minSpeed, maxSpeed);
+    m2Speed = constrain(m2Speed, minSpeed, maxSpeed);
 
+    lastError = error;
 }
 
 // each arguments takes values between -255 and 255. The negative values represent the motor speed
@@ -187,3 +184,21 @@ void setMotorSpeed(int motor1Speed, int motor2Speed)
     }
 }
 
+void debug()
+{
+    Serial.print("Error: ");
+    Serial.println(error);
+    Serial.print("M1 speed: ");
+    Serial.println(m1Speed);
+
+    Serial.print("M2 speed: ");
+    Serial.println(m2Speed);
+
+    for (int i = 0; i < 6; i++)
+    {
+        Serial.print(sensorValues[i]);
+        Serial.print(" ");
+    }
+
+    Serial.println();
+}
