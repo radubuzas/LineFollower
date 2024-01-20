@@ -11,24 +11,20 @@ int m1Speed = 0;
 int m2Speed = 0;
 
 // increase kp’s value and see what happens
-float kp = 2;
-float ki = 0.1;
-float kd = 4;
-
-// =======
-// float kp = 3;
-// float ki = 0;
-// float kd = 20;
-// >>>>>>> f45b32701f045bfc98982385325abe0299a6b877
+float kp = 15;
+float ki = 0;
+float kd = 0;
 
 int p;
 int i;
 int d;
 
+int error;
+
 const int maxSpeed = 255;
 const int minSpeed = -255;
 
-const int baseSpeed = 175;
+int baseSpeed;
 
 QTRSensors qtr;
 
@@ -48,69 +44,98 @@ void setup()
     pinMode(m22Pin, OUTPUT);
     pinMode(m1Enable, OUTPUT);
     pinMode(m2Enable, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
 
     qtr.setTypeAnalog();
     qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5}, sensorCount);
 
     delay(500);
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, HIGH); // turn on Arduino's LED to indicate we are in calibration mode
 
-    // calibrate the sensor. For maximum grade the line follower should do the movement itself,
-    // without human interaction.
+    //  turn on Arduino's LED to indicate we are in calibration mode
+    digitalWrite(LED_BUILTIN, HIGH);
     selfCalibrate();
     digitalWrite(LED_BUILTIN, LOW);
 }
 
-void loop()
+// void selfCalibrate()
+// {
+//     int sign = 1;
+//     int speed = 150;
+
+//     bool changeDirection;
+//     unsigned long lastChangeTime = 0;
+//     unsigned int changeDelay = 400;
+
+//     for (uint16_t i = 0; i < 400; i++)
+//     {
+//         qtr.calibrate();
+//         // qtr.readLineBlack(sensorValues);
+
+//         // changeDirection = true;
+//         // for (int i = 0; i < 6; i++) {
+//         //     if (sensorValues[i] >= 30) {
+//         //         changeDirection = false;
+
+//         //         break;
+//         //     }
+//         // }
+
+//         // if (changeDirection && millis() - lastChangeTime > changeDelay) {
+//         //     sign *= -1;
+
+//         //     lastChangeTime = millis();
+//         // }
+
+//         // setMotorSpeed(sign * speed, -sign * speed);
+//     }
+// }
+
+void selfCalibrate()
 {
-    int error = readError();
-    pidControl(error);
-    setMotorSpeed(m1Speed, m2Speed);
+    const unsigned long timeToCalibrateMs = 5000;
+    unsigned long start = millis();
+    int speed = 175;
+
+    while (millis() - start < timeToCalibrateMs) {
+        Serial.print("Hay\n");
+        qtr.calibrate();
+        updateError();
+        if (error > 48) {
+            setMotorSpeed(speed, -speed);
+            continue;
+        }
+        if (error < -48) {
+            setMotorSpeed(-speed, speed);
+            continue;
+        }
+
+    }
 }
 
-void readError()
+void loop()
+{
+    updateError();
+    pidControl();
+    setMotorSpeed(m1Speed, m2Speed);
+    debug();
+}
+
+void updateError()
 {
     const int minSensor = 0;
     const int maxSensor = 5000;
 
-    const int minError = -30;
-    const int maxError = 30;
+    const int minError = -50;
+    const int maxError = 50;
 
-    uint16_t linePosition = qtr.readLineBlack(sensorValues);
-    return map(linePosition, minSensor, maxSensor, minError, maxError);
-}
-
-void selfCalibrate()
-{
-    for (uint16_t i = 0; i < 400; i++)
-    {
-        qtr.calibrate();
-        qtr.readLineBlack(sensorValues);
-
-        changeDirection = true;
-        for (int i = 0; i < 6; i++) {
-            if (sensorValues[i] >= 30) {
-                changeDirection = false;
-
-                break;
-            }
-        }
-
-        if (changeDirection && millis() - lastChangeTime > changeDelay) {
-            sign *= -1;
-
-            lastChangeTime = millis();
-        }
-
-        setMotorSpeed(sign * speed, -sign * speed);
-    }
+    error = map(qtr.readLineBlack(sensorValues), minSensor, maxSensor, minError, maxError);
 }
 
 // calculate PID value based on error, kp, kd, ki, p, i and d.
-void pidControl(int error)
+void pidControl()
 {
     static int lastError;
+
 
     p = error;
     i = i + error;
@@ -118,36 +143,24 @@ void pidControl(int error)
 
     int motorSpeed = kp * p + ki * i + kd * d; // = error in this case
 
+    if (abs(error) >= 40)
+    {
+        baseSpeed = 150;
+    }
+    else {
+        baseSpeed = 220;
+    }
+
     m1Speed = baseSpeed;
     m2Speed = baseSpeed;
 
-    if (abs(error) <= 5) {
-        m1Speed = maxSpeed;
-        m2Speed = maxSpeed;
-    }
-
-    //  asa se trateaza curbele extreme (90º)
-    if (error >= 20)
+    if (error < 0)
     {
-        m1Speed = minSpeed;
-        m2Speed = maxSpeed;
+        m1Speed += motorSpeed;
     }
-    else if (error <= -20)
+    else if (error > 0)
     {
-        m1Speed = maxSpeed;
-        m2Speed = minSpeed;
-    }
-    else
-    {
-
-        if (error < 0)
-        {
-            m1Speed += motorSpeed;
-        }
-        else if (error > 0)
-        {
-            m2Speed -= motorSpeed;
-        }
+        m2Speed -= motorSpeed;
     }
 
     m1Speed = constrain(m1Speed, minSpeed, maxSpeed);
@@ -204,19 +217,26 @@ void setMotorSpeed(int motor1Speed, int motor2Speed)
 
 void debug()
 {
-    Serial.print("Error: ");
-    Serial.println(error);
-    Serial.print("M1 speed: ");
-    Serial.println(m1Speed);
+    static unsigned long lastDebugTime = 0;
+    static unsigned int debugDelay = 500;
 
-    Serial.print("M2 speed: ");
-    Serial.println(m2Speed);
+    if (millis() - lastDebugTime > debugDelay) {
+        Serial.print("Error: ");
+        Serial.println(error);
+        Serial.print("M1 speed: ");
+        Serial.println(m1Speed);
 
-    for (int i = 0; i < 6; i++)
-    {
-        Serial.print(sensorValues[i]);
-        Serial.print(" ");
+        Serial.print("M2 speed: ");
+        Serial.println(m2Speed);
+
+        for (int i = 0; i < 6; i++)
+        {
+            Serial.print(sensorValues[i]);
+            Serial.print(" ");
+        }
+
+        Serial.println();
+
+        lastDebugTime = millis();
     }
-
-    Serial.println();
 }
