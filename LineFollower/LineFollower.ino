@@ -67,6 +67,26 @@ void setup()
 
 void loop()
 {
+    pidControl(kp, ki, kd);
+    setMotorSpeed(m1Speed, m2Speed);
+
+    //  DEBUGGING
+    //  Serial.print("Error: ");
+    //  Serial.println(error);
+    //  Serial.print("M1 speed: ");
+    //  Serial.println(m1Speed);
+    //
+    //  Serial.print("M2 speed: ");
+    //  Serial.println(m2Speed);
+    //
+    //  delay(250);
+
+    // lastError = error;
+}
+
+// calculate PID value based on error, kp, kd, ki, p, i and d.
+void pidControl(float kp, float ki, float kd)
+{
     // inefficient code, written in loop. You must create separate functions
     int error = map(qtr.readLineBlack(sensorValues), 0, 5000, -50, 50);
 
@@ -91,32 +111,13 @@ void loop()
     {
         m2Speed -= motorSpeed;
     }
+
     // make sure it doesn't go past limits. You can use -255 instead of 0 if calibrated programmed
     // properly. making sure we don't go out of bounds maybe the lower bound should be negative,
     // instead of 0? This of what happens when making a steep turn
+
     m1Speed = constrain(m1Speed, 0, maxSpeed);
     m2Speed = constrain(m2Speed, 0, maxSpeed);
-
-    setMotorSpeed(m1Speed, m2Speed);
-
-    //  DEBUGGING
-    //  Serial.print("Error: ");
-    //  Serial.println(error);
-    //  Serial.print("M1 speed: ");
-    //  Serial.println(m1Speed);
-    //
-    //  Serial.print("M2 speed: ");
-    //  Serial.println(m2Speed);
-    //
-    //  delay(250);
-
-    // lastError = error;
-}
-
-// calculate PID value based on error, kp, kd, ki, p, i and d.
-void pidControl(float kp, float ki, float kd)
-{
-    // TODO
 }
 
 // each arguments takes values between -255 and 255. The negative values represent the motor speed
