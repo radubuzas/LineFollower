@@ -9,8 +9,10 @@ Meet **Jerry**, the Line Follower robot with a great personality. Designed to fo
 - Arduino Nano
 - 2 Motors with Wheels
 - Infrared (IR) Sensors for Line Detection
-- Battery for Power
+- LiPo Battery for Power
 - Wires and Connectors
+- 3rd wheel for stability
+- 3D Printed Body
 
 ## Setup
 
@@ -36,7 +38,7 @@ Upon activation, **"Jerry"** undergoes a brief start-up sequence, preparing itse
    - Turn on the robot by connecting the battery.
 
 2. **Start-up Sequence:**
-   - Observe the charming start-up sequence as **Jerry** prepares for its journey.
+   - Observe the beautiful start-up sequence as **Jerry** prepares for its journey.
 
 3. **Line Following:**
    - Place the robot on a surface with a visible dark line.
