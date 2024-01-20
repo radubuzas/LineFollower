@@ -1,22 +1,62 @@
 # Line Follower Documentation :robot:
 
-## Introduction
 
-Meet **Jerry**, the Line Follower robot with a great personality. Designed to follow dark lines, this robot combines coding with a great sense of adventure. **"Jerry"** possesses a brain (powered by a nano Arduino board), a heart (a trusty battery), and two legs (equipped with motors and wheels). Just like any dedicated racer, it takes a few moments to prepare before starting its line-following journey, after which it run the path with speed and precision.
+<details>
+<summary> 
+Project Description
+</summary>
+
+## Project Description
+Meet **Jerry**, the Line Follower robot with a great personality. Designed to follow dark lines, this robot combines coding with a great sense of adventure. **Jerry** possesses a brain (powered by a nano Arduino board), a heart (a trusty battery), and two legs (equipped with motors and wheels). Just like any dedicated racer, it takes a few moments to prepare before starting its line-following journey, after which it run the path with speed and precision.
+
+</details>
+
+<details>
+<summary> 
+Components
+</summary>
 
 ## Components
 
+- Cardboard for the body
 - Arduino Nano
-- 2 Motors with Wheels
-- Infrared (IR) Sensors for Line Detection
-- LiPo Battery for Power
+- Breadboard
 - Wires and Connectors
-- 3rd wheel for stability
-- 3D Printed Body
+- Infrared (IR) Sensors for Line Detection
+- 1 LiPo Battery for Power
+- 2 Motors with Wheels
+- 3rd ball for stability
+
+
+</details>
+
+<details>
+<summary> 
+Design Description
+</summary>
+
+## Design Description
+
+The main body was designed for a lightweight machine. The two motors with wheels are attached to the bottom of the body, while the Arduino, the breadboard and the battery are placed on top. The IR sensor is placed at the front of the car. This structure allows the cables and the connectors to be easyly organized. At the end of the car is the a 3rd ball which is used for stability and smoothness of the movement.The Arduino board is programmed to receive the signals from the IR sensors and adjust the speed and direction of the motors accordingly. All these components are building **Jerry**, the line follower.
+
+</details>
+
+
+<details>
+<summary> 
+Setup
+</summary>
 
 ## Setup
 
 ![Jerry, the line follower](Jerry.webp)
+
+</details>
+
+<details>
+<summary> 
+Functionality
+</summary>
 
 ## Functionality
 
@@ -31,6 +71,13 @@ The two motors with wheels provide motion control. The speed and direction of th
 ### Start-up Sequence
 
 Upon activation, **"Jerry"** undergoes a brief start-up sequence, preparing itself for the line-following adventure. This adds a touch of personality to the robot's behavior.
+
+</details>
+
+<details>
+<summary> 
+Operation and Customization
+</summary>
 
 ## Operation
 
