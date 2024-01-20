@@ -135,13 +135,10 @@ void pidControl(float kp, float ki, float kd)
     // properly. making sure we don't go out of bounds maybe the lower bound should be negative,
     // instead of 0? This of what happens when making a steep turn
 
-<<<<<<< HEAD
-    m1Speed = constrain(m1Speed, minSpeed, maxSpeed);
-    m2Speed = constrain(m2Speed, minSpeed, maxSpeed);
-=======
+
     m1Speed = constrain(m1Speed, -100, maxSpeed);
     m2Speed = constrain(m2Speed, -100, maxSpeed);
->>>>>>> cbec02da17b5a643d687571862c342a83c330e44
+
 }
 
 // each arguments takes values between -255 and 255. The negative values represent the motor speed
