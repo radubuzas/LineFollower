@@ -14,9 +14,7 @@ Meet **Jerry**, the Line Follower robot with a great personality. Designed to fo
 
 ## Setup
 
-![Line Follower Robot](https://example.com/line_follower_image)
-
-*Image: An illustration or image showcasing the Line Follower robot setup.*
+![Jerry, the line follower](Jerry.webp)
 
 ## Functionality
 
@@ -35,18 +33,18 @@ Upon activation, **"Jerry"** undergoes a brief start-up sequence, preparing itse
 ## Operation
 
 1. **Power On:**
-   - Turn on the robot using the power switch or button.
+   - Turn on the robot by connecting the battery.
 
 2. **Start-up Sequence:**
-   - Observe the charming start-up sequence as **"Jerry"** prepares for its journey.
+   - Observe the charming start-up sequence as **Jerry** prepares for its journey.
 
 3. **Line Following:**
    - Place the robot on a surface with a visible dark line.
-   - Watch as **"Jerry"** follows the line with agility and precision.
+   - Admire **"Jerry"** follows the line with agility and precision.
 
 4. **Speed Adjustment:**
    - The robot dynamically adjusts its speed based on the complexity of the line-following task.
 
 ## Customization
 
-Feel free to customize **"Jerry"** by adjusting the line-following algorithm parameters, tweaking motor speeds, or even adding additional features to enhance its personality.
+Feel free to customize **Jerry** by adjusting the line-following algorithm parameters, tweaking motor speeds, or even adding additional features to enhance its personality.
