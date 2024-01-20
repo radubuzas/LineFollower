@@ -55,11 +55,7 @@ void setup()
 
     // calibrate the sensor. For maximum grade the line follower should do the movement itself,
     // without human interaction.
-    for (uint16_t i = 0; i < 400; i++)
-    {
-        qtr.calibrate();
-        // do motor movement here, with millis() as to not ruin calibration)
-    }
+    selfCalibrate();
     digitalWrite(LED_BUILTIN, LOW);
 
     Serial.begin(9600);
@@ -82,6 +78,24 @@ void loop()
     //  delay(250);
 
     // lastError = error;
+}
+
+void selfCalibrate() {
+    int sign = 1;
+    int speed = 100;
+
+    unsigned long lastMovement = 0;
+    const unsigned long delay = 200;
+
+    for (uint16_t i = 0; i < 400; i++)
+    {
+        qtr.calibrate();
+        if (millis() - lastMovement > delay) {
+            setMotorSpeed(sign * speed, -sign * speed);
+            sign = -1;
+            lastMovement = millis();
+        }
+    }
 }
 
 // calculate PID value based on error, kp, kd, ki, p, i and d.
@@ -116,8 +130,8 @@ void pidControl(float kp, float ki, float kd)
     // properly. making sure we don't go out of bounds maybe the lower bound should be negative,
     // instead of 0? This of what happens when making a steep turn
 
-    m1Speed = constrain(m1Speed, 0, maxSpeed);
-    m2Speed = constrain(m2Speed, 0, maxSpeed);
+    m1Speed = constrain(m1Speed, minSpeed, maxSpeed);
+    m2Speed = constrain(m2Speed, minSpeed, maxSpeed);
 }
 
 // each arguments takes values between -255 and 255. The negative values represent the motor speed
