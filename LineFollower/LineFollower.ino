@@ -61,17 +61,17 @@ void selfCalibrate()
 {
     const unsigned long timeToCalibrateMs = 5000;
     unsigned long start = millis();
-    int speed = 150;
+    int speed = 160;
 
     while (millis() - start < timeToCalibrateMs) {
         Serial.print("Hay\n");
         qtr.calibrate();
         updateError();
-        if (error > 47) {
+        if (error > 45) {
             setMotorSpeed(speed, -speed);
             continue;
         }
-        if (error < -47) {
+        if (error < -45) {
             setMotorSpeed(-speed, speed);
             continue;
         }
@@ -104,6 +104,10 @@ void pidControl()
     static int lastError;
     static int cnt = 0;
 
+    // if (abs(error) <= 5){
+    //     error = 0;
+    // }
+
     p = error;
     i = i + error;
     d = error - lastError; //  TO MODIFY
@@ -113,25 +117,18 @@ void pidControl()
         cnt = 0;
     }
 
+    baseSpeed = map(abs(d), 0, 50, 200, 140);
+
+    if (baseSpeed < 160) {
+        kp = 40;
+        kd = 0;
+    }
+    else {
+        kp = 20;
+        kd = 100;
+    }
+
     int motorSpeed = kp * p + ki * i + kd * d; // = error in this case
-
-    baseSpeed = map(abs(d), 0, 50, 200, 120);
-
-    // if (abs(error < 2)) {
-    //      baseSpeed = maxSpeed;
-    // }
-    // else if (abs(error) >= 45)
-    // {
-    //     baseSpeed = 130;
-    // }
-    // else if (abs(error) >= 40)
-    // {
-    //     baseSpeed = 150;
-    // }
-    // else
-    // {
-    //     baseSpeed = 220;
-    // }
 
     m1Speed = baseSpeed;
     m2Speed = baseSpeed;
