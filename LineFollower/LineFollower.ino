@@ -12,9 +12,9 @@ int m1Speed = 0;
 int m2Speed = 0;
 
 // increase kp’s value and see what happens
-float kp = 10;
+float kp = 3;
 float ki = 0;
-float kd = 5;
+float kd = 10;
 
 int p = 1;
 int i = 0;
@@ -26,7 +26,7 @@ int lastError = 0;
 const int maxSpeed = 255;
 const int minSpeed = -255;
 
-const int baseSpeed = 120;
+const int baseSpeed = 200;
 
 QTRSensors qtr;
 
@@ -71,17 +71,22 @@ void loop()
     setMotorSpeed(m1Speed, m2Speed);
 
     //  DEBUGGING
-    //  Serial.print("Error: ");
-    //  Serial.println(error);
-    //  Serial.print("M1 speed: ");
-    //  Serial.println(m1Speed);
-    //
-    //  Serial.print("M2 speed: ");
-    //  Serial.println(m2Speed);
-    //
-    //  delay(250);
+     Serial.print("Error: ");
+     Serial.println(error);
+     Serial.print("M1 speed: ");
+     Serial.println(m1Speed);
+    
+     Serial.print("M2 speed: ");
+     Serial.println(m2Speed);
 
-    // lastError = error;
+     for (int i = 0; i < 6; i ++) {
+        Serial.print(sensorValues[i]);
+        Serial.print(" ");
+     }
+
+     Serial.println();
+
+    lastError = error;
 }
 
 // calculate PID value based on error, kp, kd, ki, p, i and d.
@@ -116,8 +121,8 @@ void pidControl(float kp, float ki, float kd)
     // properly. making sure we don't go out of bounds maybe the lower bound should be negative,
     // instead of 0? This of what happens when making a steep turn
 
-    m1Speed = constrain(m1Speed, 0, maxSpeed);
-    m2Speed = constrain(m2Speed, 0, maxSpeed);
+    m1Speed = constrain(m1Speed, -100, maxSpeed);
+    m2Speed = constrain(m2Speed, -100, maxSpeed);
 }
 
 // each arguments takes values between -255 and 255. The negative values represent the motor speed
