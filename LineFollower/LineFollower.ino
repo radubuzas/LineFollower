@@ -11,9 +11,9 @@ int m1Speed = 0;
 int m2Speed = 0;
 
 // increase kp’s value and see what happens
-float kp = 100;
+float kp = 20;
 float ki = 0;
-float kd = 60;
+float kd = 2;
 
 int p;
 int i;
@@ -28,10 +28,10 @@ int baseSpeed = 200;
 
 QTRSensors qtr;
 
-const int sensorCount = 6;
+const int sensorCount = 8;
 
 uint16_t sensorValues[sensorCount];
-int      sensors[sensorCount] = {0, 0, 0, 0, 0, 0};
+int      sensors[sensorCount] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 void setup()
 {
@@ -47,7 +47,7 @@ void setup()
     pinMode(LED_BUILTIN, OUTPUT);
 
     qtr.setTypeAnalog();
-    qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5}, sensorCount);
+    qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5, A6, A7}, sensorCount);
 
     delay(500);
 
@@ -61,17 +61,17 @@ void selfCalibrate()
 {
     const unsigned long timeToCalibrateMs = 5000;
     unsigned long start = millis();
-    int speed = 175;
+    int speed = 150;
 
     while (millis() - start < timeToCalibrateMs) {
         Serial.print("Hay\n");
         qtr.calibrate();
         updateError();
-        if (error > 48) {
+        if (error > 47) {
             setMotorSpeed(speed, -speed);
             continue;
         }
-        if (error < -48) {
+        if (error < -47) {
             setMotorSpeed(-speed, speed);
             continue;
         }
@@ -115,7 +115,7 @@ void pidControl()
 
     int motorSpeed = kp * p + ki * i + kd * d; // = error in this case
 
-    baseSpeed = map(abs(d), 0, 50, maxSpeed, 120);
+    baseSpeed = map(abs(d), 0, 50, 200, 120);
 
     // if (abs(error < 2)) {
     //      baseSpeed = maxSpeed;
@@ -209,7 +209,7 @@ void debug()
         Serial.print("M2 speed: ");
         Serial.println(m2Speed);
 
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 8; i++)
         {
             Serial.print(sensorValues[i]);
             Serial.print(" ");
