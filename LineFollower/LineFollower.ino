@@ -11,9 +11,9 @@ int m1Speed = 0;
 int m2Speed = 0;
 
 // increase kp’s value and see what happens
-float kp = 20;
+float kp = 100;
 float ki = 0;
-float kd = 2;
+float kd = 60;
 
 int p;
 int i;
@@ -115,7 +115,7 @@ void pidControl()
 
     int motorSpeed = kp * p + ki * i + kd * d; // = error in this case
 
-    baseSpeed = map(error, minError, maxError, maxSpeed, 120);
+    baseSpeed = map(abs(d), 0, 50, maxSpeed, 120);
 
     // if (abs(error < 2)) {
     //      baseSpeed = maxSpeed;
@@ -147,8 +147,6 @@ void pidControl()
 
     m1Speed = constrain(m1Speed, minSpeed, maxSpeed);
     m2Speed = constrain(m2Speed, minSpeed, maxSpeed);
-
-    lastError = error;
 }
 
 // each arguments takes values between -255 and 255. The negative values represent the motor speed
