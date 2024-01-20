@@ -11,9 +11,9 @@ int m1Speed = 0;
 int m2Speed = 0;
 
 // increase kp’s value and see what happens
-float kp = 15;
+float kp = 20;
 float ki = 0;
-float kd = 0;
+float kd = 2;
 
 int p;
 int i;
@@ -24,7 +24,7 @@ int error;
 const int maxSpeed = 255;
 const int minSpeed = -255;
 
-int baseSpeed;
+int baseSpeed = 200;
 
 QTRSensors qtr;
 
@@ -57,39 +57,6 @@ void setup()
     digitalWrite(LED_BUILTIN, LOW);
 }
 
-// void selfCalibrate()
-// {
-//     int sign = 1;
-//     int speed = 150;
-
-//     bool changeDirection;
-//     unsigned long lastChangeTime = 0;
-//     unsigned int changeDelay = 400;
-
-//     for (uint16_t i = 0; i < 400; i++)
-//     {
-//         qtr.calibrate();
-//         // qtr.readLineBlack(sensorValues);
-
-//         // changeDirection = true;
-//         // for (int i = 0; i < 6; i++) {
-//         //     if (sensorValues[i] >= 30) {
-//         //         changeDirection = false;
-
-//         //         break;
-//         //     }
-//         // }
-
-//         // if (changeDirection && millis() - lastChangeTime > changeDelay) {
-//         //     sign *= -1;
-
-//         //     lastChangeTime = millis();
-//         // }
-
-//         // setMotorSpeed(sign * speed, -sign * speed);
-//     }
-// }
-
 void selfCalibrate()
 {
     const unsigned long timeToCalibrateMs = 5000;
@@ -120,13 +87,13 @@ void loop()
     debug();
 }
 
+const int minError = -50;
+const int maxError = 50;
+
 void updateError()
 {
     const int minSensor = 0;
     const int maxSensor = 5000;
-
-    const int minError = -50;
-    const int maxError = 50;
 
     error = map(qtr.readLineBlack(sensorValues), minSensor, maxSensor, minError, maxError);
 }
@@ -135,21 +102,36 @@ void updateError()
 void pidControl()
 {
     static int lastError;
-
+    static int cnt = 0;
 
     p = error;
     i = i + error;
     d = error - lastError; //  TO MODIFY
 
+    if (++cnt == 10) {
+        lastError = error;
+        cnt = 0;
+    }
+
     int motorSpeed = kp * p + ki * i + kd * d; // = error in this case
 
-    if (abs(error) >= 40)
-    {
-        baseSpeed = 150;
-    }
-    else {
-        baseSpeed = 220;
-    }
+    baseSpeed = map(error, minError, maxError, maxSpeed, 120);
+
+    // if (abs(error < 2)) {
+    //      baseSpeed = maxSpeed;
+    // }
+    // else if (abs(error) >= 45)
+    // {
+    //     baseSpeed = 130;
+    // }
+    // else if (abs(error) >= 40)
+    // {
+    //     baseSpeed = 150;
+    // }
+    // else
+    // {
+    //     baseSpeed = 220;
+    // }
 
     m1Speed = baseSpeed;
     m2Speed = baseSpeed;
