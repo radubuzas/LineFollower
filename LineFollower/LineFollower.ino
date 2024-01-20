@@ -7,14 +7,13 @@ const int m1Enable = 11;
 const int m2Enable = 10;
 
 // OUTPUT 1-2 -> Motor Dreapta
-
 int m1Speed = 0;
 int m2Speed = 0;
 
 // increase kp’s value and see what happens
 float kp = 3;
 float ki = 0;
-float kd = 20;
+float kd = 5;
 
 int p = 1;
 int i = 0;
@@ -26,7 +25,7 @@ int lastError = 0;
 const int maxSpeed = 255;
 const int minSpeed = -255;
 
-const int baseSpeed = 255;
+const int baseSpeed = 175;
 
 QTRSensors qtr;
 
@@ -37,6 +36,7 @@ int sensors[sensorCount] = {0, 0, 0, 0, 0, 0};
 
 void setup()
 {
+    Serial.begin(9600);
 
     // pinMode setup
     pinMode(m11Pin, OUTPUT);
@@ -57,8 +57,6 @@ void setup()
     // without human interaction.
     selfCalibrate();
     digitalWrite(LED_BUILTIN, LOW);
-
-    Serial.begin(9600);
 }
 
 void loop()
@@ -66,40 +64,55 @@ void loop()
     pidControl(kp, ki, kd);
     setMotorSpeed(m1Speed, m2Speed);
 
-    //  DEBUGGING
-     Serial.print("Error: ");
-     Serial.println(error);
-     Serial.print("M1 speed: ");
-     Serial.println(m1Speed);
+    // //  DEBUGGING
+    // Serial.print("Error: ");
+    // Serial.println(error);
+    // Serial.print("M1 speed: ");
+    // Serial.println(m1Speed);
     
-     Serial.print("M2 speed: ");
-     Serial.println(m2Speed);
+    // Serial.print("M2 speed: ");
+    // Serial.println(m2Speed);
 
-     for (int i = 0; i < 6; i ++) {
+    for (int i = 0; i < 6; i ++) {
         Serial.print(sensorValues[i]);
         Serial.print(" ");
-     }
+    }
+    Serial.println();
 
-     Serial.println();
+    delay(250);
 
     lastError = error;
 }
 
 void selfCalibrate() {
     int sign = 1;
-    int speed = 200;
+    int speed = 165;
 
-    unsigned long lastMovement = 0;
-    const unsigned long delay = 800;
+    bool changeDirection;
+    unsigned long lastChangeTime = 0;
+    unsigned int changeDelay = 300;
 
     for (uint16_t i = 0; i < 400; i++)
     {
         qtr.calibrate();
-        // if (millis() - lastMovement > delay) {
-        //     setMotorSpeed(sign * speed, -sign * speed);
-        //     sign *= -1;
-        //     lastMovement = millis();
-        // }
+        qtr.readLineBlack(sensorValues);
+
+        changeDirection = true;
+        for (int i = 0; i < 6; i++) {
+            if (sensorValues[i] >= 30) {
+                changeDirection = false;
+
+                break;
+            }
+        }
+
+        if (changeDirection && millis() - lastChangeTime > changeDelay) {
+            sign *= -1;
+
+            lastChangeTime = millis();
+        }
+
+        setMotorSpeed(sign * speed, -sign * speed);
     }
 }
 
