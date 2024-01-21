@@ -18,15 +18,24 @@ Components
 
 ## Components
 
-- Cardboard for the body
+### Non-electronic:
+
+- 1 ball caster
+- Cardboard for the chassis
+- 2 Wheels
+- Bolts & nuts
+- Zip ties (for keeping the components in place)
+
+
+### Electronic:
+
 - Arduino Nano
-- Breadboard
-- Wires and Connectors
+- Mini Breadboard
 - Infrared (IR) Sensors for Line Detection
 - 1 LiPo Battery for Power
-- 2 Motors with Wheels
-- 3rd ball for stability
-
+- L293D motor driver
+- 2 DC Motors
+- Wires and Connectors
 
 </details>
 
