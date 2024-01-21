@@ -3,20 +3,20 @@
 
 <details>
 <summary> 
-Project Description
+Project Description :page_facing_up:
 </summary>
 
-## Project Description
+## Project Description :page_facing_up:
 Meet **Jerry**, the Line Follower robot with a great personality. Designed to follow dark lines, this robot combines coding with a great sense of adventure. **Jerry** possesses a brain (powered by a nano Arduino board), a heart (a trusty battery), and two legs (equipped with motors and wheels). Just like any dedicated racer, it takes a few moments to prepare before starting its line-following journey, after which it run the path with speed and precision.
 
 </details>
 
 <details>
 <summary> 
-Components
+Components :wrench:
 </summary>
 
-## Components
+## Components :wrench:
 
 ### Non-electronic:
 
@@ -27,7 +27,7 @@ Components
 - Zip ties (for keeping the components in place)
 
 
-### Electronic:
+### Electronic:  :electric_plug:
 
 - Arduino Nano
 - Mini Breadboard
@@ -41,7 +41,7 @@ Components
 
 <details>
 <summary> 
-Design Description
+Design Description :pencil2:
 </summary>
 
 ## Design Description
@@ -64,20 +64,20 @@ Setup
 
 <details>
 <summary> 
-Functionality
+Functionality :gear:
 </summary>
 
-## Functionality
-
+## Functionality :gear:
+ 
 ### Line Following Algorithm
 
 **"Jerry"** employs infrared (IR) sensors to detect and follow dark lines on a contrasting surface. The line-following algorithm ensures smooth navigation, allowing the robot to stay on course with precision.
 
-### Speed Control
+### Speed Control :rabbit2:
 
 The two motors with wheels provide motion control. The speed and direction of the motors are adjusted based on the input from the IR sensors, enabling the robot to maintain its path and follow the line at an optimal speed.
 
-### Start-up Sequence
+### Start-up Sequence :rocket:
 
 Upon activation, **"Jerry"** undergoes a brief start-up sequence, preparing itself for the line-following adventure. This adds a touch of personality to the robot's behavior.
 
@@ -85,7 +85,7 @@ Upon activation, **"Jerry"** undergoes a brief start-up sequence, preparing itse
 
 <details>
 <summary> 
-Operation and Customization
+Operation and Customization :computer:
 </summary>
 
 ## Operation
