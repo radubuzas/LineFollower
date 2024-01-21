@@ -28,10 +28,10 @@ int baseSpeed = 200;
 
 QTRSensors qtr;
 
-const int sensorCount = 8;
+const int sensorCount = 6;
 
 uint16_t sensorValues[sensorCount];
-int      sensors[sensorCount] = {0, 0, 0, 0, 0, 0, 0, 0};
+int      sensors[sensorCount] = {0, 0, 0, 0, 0, 0};
 
 void setup()
 {
@@ -47,7 +47,7 @@ void setup()
     pinMode(LED_BUILTIN, OUTPUT);
 
     qtr.setTypeAnalog();
-    qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5, A6, A7}, sensorCount);
+    qtr.setSensorPins((const uint8_t[]){A0, A1, A2, A3, A4, A5}, sensorCount);
 
     delay(500);
 
@@ -57,46 +57,102 @@ void setup()
     digitalWrite(LED_BUILTIN, LOW);
 }
 
-void selfCalibrate()
-{
-    const unsigned long timeToCalibrateMs = 5000;
-    unsigned long start = millis();
-    unsigned long last = start;
-    int speed = 150;
+void selfCalibrate() {
+    const unsigned long CalibrateTime = 5000;
 
-    // qtr.calibrate();
-    // setMotorSpeed(speed, 0);
-    // qtr.calibrate();
-    // delay(300);
-    // qtr.calibrate();
-    // setMotorSpeed(speed, 0);
-    // qtr.calibrate();
-    // delay(300);
-    // qtr.calibrate();
-
+    unsigned long start;
+    unsigned long last;
+    int speed = 160;
 
     qtr.calibrate();
-    setMotorSpeed(0, speed);
-    delay(50);
-    qtr.calibrate();
-
-    while (millis() - start < timeToCalibrateMs) {
-        Serial.print("Error: "), Serial.println(error);
-        Serial.print("Hay\n");
+    setMotorSpeed(speed, -speed);
+    for (int i = 1; i <= 4; i++) {
+        delay(50);
         qtr.calibrate();
-        updateError();
-        if (error > 48) {
-            setMotorSpeed(0, -speed);
-            continue;
-        }
-        if (error < -48) {
-
-            setMotorSpeed(0, speed);
-            continue;
-        }
     }
 
+
+    setMotorSpeed(-speed, speed);
+    for (int i = 1; i <= 4; i++) {
+        delay(50);
+        qtr.calibrate();
+    }
+
+    start = millis();
+    last = start;
+
+    while(millis() - start < CalibrateTime) {
+        qtr.calibrate();
+        updateError();
+
+        if (error > 48) {
+            setMotorSpeed(speed, -speed);
+        }
+        else if(error < -48) {
+            setMotorSpeed(-speed, speed);
+        }
+    }
 }
+
+// void selfCalibrate()
+// {
+//     // const unsigned long timeToCalibrate = 5000;
+//     // unsigned long time
+
+//     const unsigned long timeToCalibrateMs = 5000;
+//     unsigned long start = millis();
+//     unsigned long last = start;
+//     int speed = 160;
+
+//     // // qtr.calibrate();
+//     // // setMotorSpeed(speed, 0);
+//     // // qtr.calibrate();
+//     // // delay(300);
+//     // // qtr.calibrate();
+//     // // setMotorSpeed(speed, 0);
+//     // // qtr.calibrate();
+//     // // delay(300);
+//     // // qtr.calibrate();
+
+
+//     // qtr.calibrate();
+//     // setMotorSpeed(-speed, speed);
+//     // delay(500);
+//     // qtr.calibrate();
+//     // setMotorSpeed(speed, -speed);
+//     // delay(200);
+//     // qtr.calibrate();
+
+//     while (millis() - last < timeToCalibrateMs) {
+//         qtr.calibrate();
+//         updateError();
+//         debug();
+//     }
+
+// }
+
+// void calibrareIancu() {
+//     const unsigned int calibrateTime = 5000;
+//     unsigned long start = millis();
+//     unsigned long lastTime = 0;
+//     unsigned int delay = 400;
+//     int speed = 165;
+//     int sign = 1;
+
+//     while (millis() - start < calibrateTime) {
+//         updateError();
+//         debug();
+//         qtr.calibrate();
+//         if (millis() - lastTime > delay) {
+//             sign *= -1;
+
+//             lastTime = millis();
+//         }
+
+//         setMotorSpeed(sign  * speed, -1 * sign * speed);
+//     }
+// }
+
 
 void loop()
 {
@@ -104,6 +160,8 @@ void loop()
     pidControl();
     setMotorSpeed(m1Speed, m2Speed);
     debug();
+
+    // setMotorSpeed(maxSpeed, maxSpeed);
 }
 
 const int minError = -50;
@@ -136,14 +194,14 @@ void pidControl()
         cnt = 0;
     }
 
-    baseSpeed = map(abs(d), 0, 80, 215, 182);
+    baseSpeed = map(abs(d), 0, 80, 230, 175);
 
-    if (baseSpeed <= 195) {
-        kp = 50;
-        kd = 2;
+    if (baseSpeed <= 200) {
+        kp = 53;
+        kd = 20;
     }
     else {
-        kp = 5;
+        kp = 6;
         kd = 120;
     }
 
@@ -217,15 +275,15 @@ void debug()
     static unsigned int debugDelay = 500;
 
     if (millis() - lastDebugTime > debugDelay) {
-        Serial.print("Error: ");
-        Serial.println(error);
-        Serial.print("M1 speed: ");
-        Serial.println(m1Speed);
+        // Serial.print("Error: ");
+        // Serial.println(error);
+        // Serial.print("M1 speed: ");
+        // Serial.println(m1Speed);
 
-        Serial.print("M2 speed: ");
-        Serial.println(m2Speed);
+        // Serial.print("M2 speed: ");
+        // Serial.println(m2Speed);
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < sensorCount; i++)
         {
             Serial.print(sensorValues[i]);
             Serial.print(" ");
