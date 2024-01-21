@@ -61,32 +61,41 @@ void selfCalibrate()
 {
     const unsigned long timeToCalibrateMs = 5000;
     unsigned long start = millis();
-    int speed = 170;
+    unsigned long last = start;
+    int speed = 150;
+
+    // qtr.calibrate();
+    // setMotorSpeed(speed, 0);
+    // qtr.calibrate();
+    // delay(300);
+    // qtr.calibrate();
+    // setMotorSpeed(speed, 0);
+    // qtr.calibrate();
+    // delay(300);
+    // qtr.calibrate();
+
 
     qtr.calibrate();
-    setMotorSpeed(speed, 0);
-    qtr.calibrate();
-    delay(300);
-    qtr.calibrate();
-    setMotorSpeed(speed, 0);
-    qtr.calibrate();
-    delay(300);
+    setMotorSpeed(0, speed);
+    delay(50);
     qtr.calibrate();
 
     while (millis() - start < timeToCalibrateMs) {
+        Serial.print("Error: "), Serial.println(error);
         Serial.print("Hay\n");
         qtr.calibrate();
         updateError();
         if (error > 48) {
-            setMotorSpeed(speed, -speed);
+            setMotorSpeed(0, -speed);
             continue;
         }
         if (error < -48) {
-            setMotorSpeed(-speed, speed);
+
+            setMotorSpeed(0, speed);
             continue;
         }
-
     }
+
 }
 
 void loop()
@@ -122,16 +131,16 @@ void pidControl()
     i = i + error;
     d = error - lastError; //  TO MODIFY
 
-    if (++cnt == 10) {
+    if (++cnt == 18) {
         lastError = error;
         cnt = 0;
     }
 
-    baseSpeed = map(abs(d), 0, 80, 195, 160);
+    baseSpeed = map(abs(d), 0, 80, 215, 182);
 
-    if (baseSpeed <= 175) {
-        kp = 23;
-        kd = 0;
+    if (baseSpeed <= 195) {
+        kp = 50;
+        kd = 2;
     }
     else {
         kp = 5;
