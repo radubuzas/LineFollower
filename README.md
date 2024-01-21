@@ -58,11 +58,11 @@ Setup :wrench:
 
 ## Setup :wrench:
 
-![Jerry, the line follower](frontJerry.jpg)
+![Jerry, the line follower](/Photos/frontJerry.jpg)
 
-![Jerry, the real line follower](upJerry.jpg)
+![Jerry, the real line follower](/Photos/upJerry.jpg)
 
-![Jerry, the ultimate line follower](hotJerry.jpg)
+![Jerry, the ultimate line follower](/Photos/hotJerry.jpg)
 
 </details>
 
@@ -92,7 +92,7 @@ Upon activation, **"Jerry"** undergoes a brief start-up sequence, preparing itse
 Best time 17.59 :stopwatch:
 </summary>
 
-[![Watch its journey](https://github.com/NFJJunior/LineFollower/blob/main/hotJerry.jpg)]
+[![Watch its journey](/Photos/hotJerry.jpg)](Photos/JerryInAction.mp4)
 
 </details>
 
