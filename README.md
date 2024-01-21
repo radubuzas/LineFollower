@@ -58,7 +58,11 @@ Setup :wrench:
 
 ## Setup :wrench:
 
-![Jerry, the line follower](Jerry.webp)
+![Jerry, the line follower](frontJerry.jpg)
+
+![Jerry, the real line follower](upJerry.jpg)
+
+![Jerry, the ultimate line follower](hotJerry.jpg)
 
 </details>
 
@@ -80,6 +84,15 @@ The two motors with wheels provide motion control. The speed and direction of th
 ### Start-up Sequence :rocket:
 
 Upon activation, **"Jerry"** undergoes a brief start-up sequence, preparing itself for the line-following adventure. This adds a touch of personality to the robot's behavior.
+
+</details>
+
+<details>
+<summary> 
+Best time 17.59 :stopwatch:
+</summary>
+
+[![Watch its journey](https://github.com/NFJJunior/LineFollower/blob/main/hotJerry.jpg)]
 
 </details>
 
