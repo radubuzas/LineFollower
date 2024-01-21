@@ -94,7 +94,7 @@ The two motors with wheels provide motion control. The speed and direction of th
 
 ### Start-up Sequence :rocket:
 
-Upon activation, **"Jerry"** undergoes a brief start-up sequence, preparing itself for the line-following adventure. This adds a touch of personality to the robot's behavior.
+Upon activation, **"Jerry"** prepares a great start-up sequence, preparing itself for the line-following adventure. This adds a touch of personality to the robot's behavior.
 
 </details>
 
