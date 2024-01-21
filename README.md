@@ -69,9 +69,12 @@ Setup :wrench:
 <details>
 <summary> 
 
-![Final Track](/Photos/route.jpg)
+Final Track
 
 </summary>
+
+![Final Track](/Photos/route.jpg)
+
 </details>
 
 <details>
