@@ -62,7 +62,7 @@ Setup :wrench:
 
 ![Jerry, the real line follower](/Photos/upJerry.jpg)
 
-![Jerry, the ultimate line follower](/Photos/hotJerry.jpg)
+![Jerry, the ultimate line follower](/Photos/hotJerry.jpg) 
 
 </details>
 
@@ -92,7 +92,7 @@ Upon activation, **"Jerry"** undergoes a brief start-up sequence, preparing itse
 Best time 17.59 :stopwatch:
 </summary>
 
-[![Watch its journey](/Photos/hotJerry.jpg)](Photos/JerryInAction.mp4)
+[![Watch its journey](/Photos/hotJerry.jpg)](https://youtu.be/8WgI_KXrATU)
 
 </details>
 
