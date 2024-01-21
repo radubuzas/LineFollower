@@ -68,6 +68,14 @@ Setup :wrench:
 
 <details>
 <summary> 
+
+![Final Track](/Photos/route.jpg)
+
+</summary>
+</details>
+
+<details>
+<summary> 
 Functionality :gear:
 </summary>
 
@@ -92,7 +100,8 @@ Upon activation, **"Jerry"** undergoes a brief start-up sequence, preparing itse
 Best time 17.59 :stopwatch:
 </summary>
 
-[![Watch its journey](/Photos/hotJerry.jpg)](https://youtu.be/8WgI_KXrATU)
+
+Watch **Jerry** in action [here](https://youtu.be/8WgI_KXrATU).
 
 </details>
 
