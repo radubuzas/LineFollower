@@ -68,10 +68,9 @@ Setup :wrench:
 
 <details>
 <summary> 
-
 Final Track
-
 </summary>
+## Final Track :checkered_flag:
 
 ![Final Track](/Photos/route.jpg)
 
