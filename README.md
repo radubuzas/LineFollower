@@ -46,11 +46,31 @@ Design Description :pencil2:
 
 ## Design Description :pencil2:
 
-The main body was designed for a lightweight machine. The two motors with wheels are attached to the bottom of the body, while the Arduino, the breadboard and the battery are placed on top. The IR sensor is placed at the front of the car. This structure allows the cables and the connectors to be easyly organized. At the end of the car is the a 3rd ball which is used for stability and smoothness of the movement.The Arduino board is programmed to receive the signals from the IR sensors and adjust the speed and direction of the motors accordingly. All these components are building **Jerry**, the line follower.
+The main body was designed for a lightweight machine. The two motors with wheels are attached to the bottom of the body, while the Arduino, the breadboard and the battery are placed on top. The IR sensor is placed at the front of the car. This structure allows the cables and the connectors to be easyly organized. In the middle of the car is the a 3rd ball which is used for stability and smoothness of the movement.The Arduino board is programmed to receive the signals from the IR sensors and adjust the speed and direction of the motors accordingly. All these components are building **Jerry**, the line follower.
 
 </details>
 
+<details>
+<summary> 
+PID Controller :straight_ruler:
+</summary>
 
+## PID Controller :straight_ruler:
+**Jerry** uses a PID (Proportional-Integral_Derivate) controller to adjust the speed of its motors. It is based on the error between the current position and the ideal position. The PID is calculted with the following constants:kp, ki and kd.
+### 1. kp - proportional constant. 
+It is used to adjust the speed of the motors based on the error. The higher the kp, the faster the robot will react to the error.
+### 2. ki - integral constant.
+It is used to adjust the speed of the motors based on the sum of the errors. The higher the ki, the faster the robot will react to the sum of the errors.
+### 3. kd - derivative constant. 
+This is used to adjust the speed of the motors based on the difference between the current error and the previous error. The higher the kd, the faster the robot will react to the difference between the current error and the previous error.
+### 4. The PID is calculated as follows:
+motorSpeed = kp * p + ki * i + kd * d;
+Our initial values for the PID are:
+kp = 20;
+ki = 0;
+kd = 2;
+where p is the current error, i is the sum of the errors and d is the difference between the current error and the previous error.
+</details>
 <details>
 <summary> 
 Setup :wrench:
