@@ -69,9 +69,9 @@ motorSpeed = kp * p + ki * i + kd * d;
 
 Our initial values for the PID are:
 
-kp = 20;
+kp = 5;
 ki = 0;
-kd = 2;
+kd = 120;
 where p is the current error, i is the sum of the errors and d is the difference between the current error and the previous error.
 </details>
 <details>
