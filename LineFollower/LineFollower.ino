@@ -10,34 +10,18 @@ const int m2Enable = 10;
 int m1Speed = 0;
 int m2Speed = 0;
 
-// increase kp’s value and see what happens
-float kp = 20;
-float ki = 0;
-float kd = 2;
-
-int p;
-int i;
-int d;
-
 int error;
-
-const int maxSpeed = 255;
-const int minSpeed = -255;
-
-int baseSpeed = 200;
 
 QTRSensors qtr;
 
 const int sensorCount = 6;
-
 uint16_t sensorValues[sensorCount];
-int      sensors[sensorCount] = {0, 0, 0, 0, 0, 0};
+int sensors[sensorCount] = {0, 0, 0, 0, 0, 0};
 
-void setup()
-{
+void setup() {
     Serial.begin(9600);
 
-    // pinMode setup
+    //  Setup pins
     pinMode(m11Pin, OUTPUT);
     pinMode(m12Pin, OUTPUT);
     pinMode(m21Pin, OUTPUT);
@@ -51,161 +35,109 @@ void setup()
 
     delay(500);
 
-    //  turn on Arduino's LED to indicate we are in calibration mode
+    //  Turn on Arduino's LED to indicate we are in calibration mode
     digitalWrite(LED_BUILTIN, HIGH);
     selfCalibrate();
     digitalWrite(LED_BUILTIN, LOW);
 }
 
 void selfCalibrate() {
-    const unsigned long CalibrateTime = 5000;
+    static const unsigned long calibrateTime = 5000;
+    static unsigned long start;
 
-    unsigned long start;
-    unsigned long last;
-    int speed = 160;
+    int calibrateSpeed = 160;
+
+    //  Jiggle the car a little. After the initial jiggle, the sensor reads decent values
 
     qtr.calibrate();
-    setMotorSpeed(speed, -speed);
+
+    setMotorSpeed(calibrateSpeed, -calibrateSpeed);
     for (int i = 1; i <= 4; i++) {
         delay(50);
         qtr.calibrate();
     }
 
-
-    setMotorSpeed(-speed, speed);
+    setMotorSpeed(-calibrateSpeed, calibrateSpeed);
     for (int i = 1; i <= 4; i++) {
         delay(50);
         qtr.calibrate();
     }
 
+    //  Move the car to the highest and lowest possible errors
     start = millis();
-    last = start;
-
-    while(millis() - start < CalibrateTime) {
+    while(millis() - start < calibrateTime) {
         qtr.calibrate();
         updateError();
 
         if (error > 48) {
-            setMotorSpeed(speed, -speed);
+            setMotorSpeed(calibrateSpeed, -calibrateSpeed);
         }
         else if(error < -48) {
-            setMotorSpeed(-speed, speed);
+            setMotorSpeed(-calibrateSpeed, calibrateSpeed);
         }
     }
 }
 
-// void selfCalibrate()
-// {
-//     // const unsigned long timeToCalibrate = 5000;
-//     // unsigned long time
-
-//     const unsigned long timeToCalibrateMs = 5000;
-//     unsigned long start = millis();
-//     unsigned long last = start;
-//     int speed = 160;
-
-//     // // qtr.calibrate();
-//     // // setMotorSpeed(speed, 0);
-//     // // qtr.calibrate();
-//     // // delay(300);
-//     // // qtr.calibrate();
-//     // // setMotorSpeed(speed, 0);
-//     // // qtr.calibrate();
-//     // // delay(300);
-//     // // qtr.calibrate();
-
-
-//     // qtr.calibrate();
-//     // setMotorSpeed(-speed, speed);
-//     // delay(500);
-//     // qtr.calibrate();
-//     // setMotorSpeed(speed, -speed);
-//     // delay(200);
-//     // qtr.calibrate();
-
-//     while (millis() - last < timeToCalibrateMs) {
-//         qtr.calibrate();
-//         updateError();
-//         debug();
-//     }
-
-// }
-
-// void calibrareIancu() {
-//     const unsigned int calibrateTime = 5000;
-//     unsigned long start = millis();
-//     unsigned long lastTime = 0;
-//     unsigned int delay = 400;
-//     int speed = 165;
-//     int sign = 1;
-
-//     while (millis() - start < calibrateTime) {
-//         updateError();
-//         debug();
-//         qtr.calibrate();
-//         if (millis() - lastTime > delay) {
-//             sign *= -1;
-
-//             lastTime = millis();
-//         }
-
-//         setMotorSpeed(sign  * speed, -1 * sign * speed);
-//     }
-// }
-
-
-void loop()
-{
+void loop() {
     updateError();
     pidControl();
     setMotorSpeed(m1Speed, m2Speed);
     debug();
-
-    // setMotorSpeed(maxSpeed, maxSpeed);
 }
 
-const int minError = -50;
-const int maxError = 50;
-
-void updateError()
-{
-    const int minSensor = 0;
-    const int maxSensor = 5000;
+//  Calculate the error from the current sensor values
+void updateError() {
+    static const int minSensor = 0;
+    static const int maxSensor = 5000;
+    static const int minError = -50;
+    static const int maxError = 50;
 
     error = map(qtr.readLineBlack(sensorValues), minSensor, maxSensor, minError, maxError);
-}
 
-// calculate PID value based on error, kp, kd, ki, p, i and d.
-void pidControl()
-{
-    static int lastError;
-    static int cnt = 0;
-
-    if (abs(error) <= 5){
+    //  If the error is small, ignore it
+    if (abs(error) <= 5) {
         error = 0;
     }
+}
+
+// Calculate PD value based on error, kp, kd, p and d.
+void pidControl() {
+    static float kp;
+    static float kd;
+
+    static int p;
+    static int d;
+
+    static const int minSpeed = -255;
+    static const int maxSpeed = 255;
+
+    static int baseSpeed;
+
+    static int lastError;
+    static int cnt;
 
     p = error;
-    i = i + error;
-    d = error - lastError; //  TO MODIFY
+    d = error - lastError;
 
-    if (++cnt == 18) {
+    if (++cnt > 18) {
         lastError = error;
         cnt = 0;
     }
 
-    baseSpeed = map(abs(d), 0, 80, 230, 175);
+    //  Increase the speed on a straight line and decrease it in curves
+    baseSpeed = map(abs(d), 0, 80, 240, 190);
 
-    if (baseSpeed <= 200) {
-        kp = 53;
-        kd = 20;
+    //  If you are in a curve take a hard turn
+    if (baseSpeed <= 210) {
+        kp = 50;
+        kd = 10;
     }
     else {
-        kp = 6;
+        kp = 5;
         kd = 120;
     }
 
-    int motorSpeed = kp * p + ki * i + kd * d; // = error in this case
+    int motorSpeed = kp * p + kd * d; // = error in this case
 
     m1Speed = baseSpeed;
     m2Speed = baseSpeed;
@@ -269,19 +201,19 @@ void setMotorSpeed(int motor1Speed, int motor2Speed)
     }
 }
 
-void debug()
-{
+//  Print error, motors speed and sensor values for debug
+void debug() {
     static unsigned long lastDebugTime = 0;
     static unsigned int debugDelay = 500;
 
     if (millis() - lastDebugTime > debugDelay) {
-        // Serial.print("Error: ");
-        // Serial.println(error);
-        // Serial.print("M1 speed: ");
-        // Serial.println(m1Speed);
+        Serial.print("Error: ");
+        Serial.println(error);
+        Serial.print("M1 speed: ");
+        Serial.println(m1Speed);
 
-        // Serial.print("M2 speed: ");
-        // Serial.println(m2Speed);
+        Serial.print("M2 speed: ");
+        Serial.println(m2Speed);
 
         for (int i = 0; i < sensorCount; i++)
         {
