@@ -64,8 +64,11 @@ It is used to adjust the speed of the motors based on the sum of the errors. The
 ### 3. kd - derivative constant. 
 This is used to adjust the speed of the motors based on the difference between the current error and the previous error. The higher the kd, the faster the robot will react to the difference between the current error and the previous error.
 ### 4. The PID is calculated as follows:
+
 motorSpeed = kp * p + ki * i + kd * d;
+
 Our initial values for the PID are:
+
 kp = 20;
 ki = 0;
 kd = 2;
